@@ -54,18 +54,40 @@ namespace Zip.InstallmentsService
             var pennies = (totalAmountDue * 100) % installmentCount;
             var monthlyPayment = Math.Floor(totalAmountDue / installmentCount * 100);
 
+            List<Installment> lstInstallments = new List<Installment>();
+            for (int installmentNumber = 0; installmentNumber < installmentCount; installmentNumber++)
+            {
 
-            var installments = from installmentNumber in Enumerable.Range(1, installmentCount)
-                               let extraPenny = pennies-- > 0 ? 1 : 0
-                               let amount = (monthlyPayment + extraPenny) / 100
-                               let includeInterestAmount = amount + ((amount * interest)/100)
-                               let dueDate = DateTime.Now.AddDays(((installmentNumber - 1) * days)
-                                      + (installmentNumber > 1 ? 1 : 0))
-                               select new Installment { Amount = includeInterestAmount, DueDate = dueDate, Id = Guid.NewGuid() };
+                decimal extraPenny = 0;
+
+                ///Adding remainder in first installment
+                if (pennies > 0)
+                {
+                    extraPenny = pennies / 100;
+                    pennies = 0;
+                }
+
+                decimal amount = (monthlyPayment / 100) + extraPenny; 
+                decimal includeInterestAmount = amount + ((amount * interest) / 100);
+                DateTime dueDate = DateTime.Now.AddDays(((installmentNumber) * days)
+                       + (installmentNumber > 0 ? 1 : 0));
+
+                lstInstallments.Add(new Installment { Amount = includeInterestAmount, DueDate = dueDate, Id = Guid.NewGuid() });
+
+            }
+
+            /*We can aslo use below Linq afunctional appraoch. We can also use above simple approach as well*/
+            //var installments = from installmentNumber in Enumerable.Range(1, installmentCount)
+            //                   let extraPenny = pennies-- > 0 ? 1 : 0
+            //                   let amount = (monthlyPayment + extraPenny) / 100
+            //                   let includeInterestAmount = amount + ((amount * interest)/100)
+            //                   let dueDate = DateTime.Now.AddDays(((installmentNumber - 1) * days)
+            //                          + (installmentNumber > 1 ? 1 : 0))
+            //                   select new Installment { Amount = includeInterestAmount, DueDate = dueDate, Id = Guid.NewGuid() };
             return new PaymentPlan
             {
                 Id = Guid.NewGuid(),
-                Installments = installments.ToArray(),
+                Installments = lstInstallments.ToArray(),
                 PurchaseAmount = totalAmountDue
             };
         }
@@ -81,6 +103,7 @@ namespace Zip.InstallmentsService
 
         private bool isValidAmount(decimal amount)
         {
+
             return amount > 0;
         }
 
