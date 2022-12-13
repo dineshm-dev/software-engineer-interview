@@ -50,7 +50,7 @@ namespace Zip.InstallmentsService
             decimal purchaseamount = rule.purchaseAmount;
             int numberofdays = rule.numberOfIntervalDays;
             short numberofInstallment = rule.numberOfInstallmentPayment;
-            return isValidAmount(purchaseamount) && isValidInstallment(numberofInstallment, numberofdays);
+            return isValidAmount(purchaseamount);
         }
 
         private bool isValidAmount(decimal amount)

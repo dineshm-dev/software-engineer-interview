@@ -76,7 +76,7 @@ namespace Zip.InstallmentsService
             int numberofdays = rule.numberOfIntervalDays;
             short numberofInstallment = rule.numberOfInstallmentPayment;
 
-            return isValidAmount(purchaseamount) && isvalidInterest(rule.interestRate)
+            return isValidAmount(purchaseamount) 
                 && isValidInstallment(numberofInstallment, numberofdays);
         }
 
@@ -85,10 +85,7 @@ namespace Zip.InstallmentsService
             return amount > 0;
         }
 
-        private bool isValidInstallment(short installmentCount, int days)
-        {
-            return installmentCount <= days;
-        }
+        
 
         private bool isvalidInterest(decimal interestRate)
         {
